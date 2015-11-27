@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'maven'
+
+task zip(type: Zip, dependsOn: bootRepackage) {
+    from '.'
+    baseName = 'as-gps-firehose'
+    include 'config/**'
+    include 'run-bin/*.sh'
+    include 'run-bin/*.bat'
+    include 'run-bin/*.sql'
+    include 'build/libs/*.jar'
+}
+build.dependsOn(zip)
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-logging'
+    compile.exclude module: 'logback-classic'
+    compile.exclude module: 'logback-core'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator' 
+    compile 'org.springframework.boot:spring-boot-starter-log4j'
+   	compile 'com.goebl:david-webb:1.1.0'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+
+
