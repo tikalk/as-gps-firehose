@@ -26,6 +26,9 @@ public class Application {
 	@Value("${gpsInputFile:/var/log/angelsense/gps.log}")
 	private String gpsInputFile;
 	
+	@Value("${filterImei:}")
+	private String filterImei;
+	
 	private Webb webb;
 
 	public static void main(final String[] args) throws Exception {
@@ -39,8 +42,12 @@ public class Application {
 	}
 	
 	public void run(final String... args) throws Exception {
-		final Stream<String> linesStream = Files.lines(Paths.get("/var/log/angelsense/gps.log"));
-		Files.lines(Paths.get(gpsInputFile)).forEach(this::doSend);
+		final Stream<String> linesStream;
+		if(filterImei==null || filterImei.isEmpty())
+			linesStream = Files.lines(Paths.get(gpsInputFile));
+		else
+			linesStream = Files.lines(Paths.get(gpsInputFile)).filter(l->(l.split(",")[1]).equals(filterImei));
+		linesStream.forEach(this::doSend);
 		linesStream.close();
 	}
 	
