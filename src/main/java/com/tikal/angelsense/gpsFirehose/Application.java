@@ -44,8 +44,6 @@ public class Application {
 	}
 	
 	public void run(final String... args) throws Exception {
-//		final String s = "$$E142,013950004392362,AAA,35,35.066921,-101.918418,150901115957,A,8,14,20,85,1.2,1118,100,200,310|410|6e8f|2f81,0000,0000|0000|0000|9f5|2,,*AA,150901120000";
-//		final boolean contains = filterImei.contains(s.split(",")[1]);
 		final Stream<String> linesStream;
 		if(filterImei==null || filterImei.isEmpty())
 			linesStream = Files.lines(Paths.get(gpsInputFile));
