@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -31,7 +32,9 @@ public class Application {
 	@Value("#{'${filterImei}'.split(',')}") 
 	private Set<String> filterImei;
 	
-	private Webb webb;
+	@Autowired
+	private GpsSender gpsSender;
+	
 
 	public static void main(final String[] args) throws Exception {
 		SpringApplication.run(Application.class, args);
@@ -39,7 +42,6 @@ public class Application {
 	
 	@Bean
 	CommandLineRunner init() {
-		webb = Webb.create();
 		return this::run;
 	}
 	
@@ -49,15 +51,13 @@ public class Application {
 			linesStream = Files.lines(Paths.get(gpsInputFile));
 		else
 			linesStream = Files.lines(Paths.get(gpsInputFile)).filter(l->filterImei.contains(l.split(",")[1]));
-		linesStream.forEach(this::doSend);
+		linesStream.forEach(this::sendAndWait);
 		linesStream.close();
 	}
 	
-	private void doSend(final String g) {
+	void sendAndWait(final String g){
 		try {
-			logger.debug("Sending to device-manager pending GPS via HTTP: {}...",g);
-			final Response<Void> response = webb.post(deviceManagerPostGpsUrl).body(g).ensureSuccess().asVoid();
-			logger.debug("Got from device-manager HTTP status {} for {}",response.getStatusCode(),g);
+			gpsSender.send(g);
 			Thread.sleep(schedualeIntervalInMillis);
 		} catch (final Exception e) {
 			logger.error(e.getMessage());
