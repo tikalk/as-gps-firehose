@@ -1,4 +1,4 @@
-package com.tikal.angelsense.gpsFirehose;
+package com.tikal.fleettracker.gpsFirehose;
 
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;

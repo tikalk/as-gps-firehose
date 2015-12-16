@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting AngelSense Firehose"
+echo "Starting FleetTracker Firehose"
 
 DIRNAME=`dirname $0`
 APP_HOME=`cd $DIRNAME/..;pwd;`

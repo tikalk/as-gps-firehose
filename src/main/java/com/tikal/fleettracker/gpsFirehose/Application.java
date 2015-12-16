@@ -1,4 +1,4 @@
-package com.tikal.angelsense.gpsFirehose;
+package com.tikal.fleettracker.gpsFirehose;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,7 +26,7 @@ public class Application {
 	@Value("${schedualeIntervalInMillis}")
 	private int schedualeIntervalInMillis;
 	
-	@Value("${gpsInputFile:/var/log/angelsense/gps.log}")
+	@Value("${gpsInputFile:/var/log/fleettracker/gps.log}")
 	private String gpsInputFile;
 	
 	@Value("#{'${filterImei}'.split(',')}") 
