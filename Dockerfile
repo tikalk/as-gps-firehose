@@ -10,6 +10,6 @@ EXPOSE 6080
 ADD build/distributions/as-gps-firehose-1.0.0.tar.gz /as-gps-firehose
 
 # Launch the verticle
-ENV WORKDIR /as-gps-firehose/run-bin
+ENV WORKDIR /as-gps-firehose
 ENTRYPOINT ["sh", "-c"]
-CMD ["cd $WORKDIR ; ./gps-firehose.sh"]
+CMD ["cd $WORKDIR ; ./run-bin/gps-firehose.sh"]
