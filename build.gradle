@@ -18,7 +18,8 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-task zip(type: Zip, dependsOn: bootRepackage) {
+task zip(type: Tar, dependsOn: bootRepackage) {
+    extension = 'tar.gz'
     from '.'
     baseName = 'as-gps-firehose'
     include 'config/**'
@@ -59,7 +60,7 @@ dependencies {
 
 
 task buildImage(type: DockerBuildImage) {
-    dependsOn shadowJar
+    dependsOn zip
     quiet = false
     inputDir = projectDir
 
