@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+        classpath 'com.bmuschko:gradle-docker-plugin:2.5'
     }
 }
 
@@ -12,8 +13,13 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'maven'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
-task zip(type: Zip, dependsOn: bootRepackage) {
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+task zip(type: Tar, dependsOn: bootRepackage) {
+    extension = 'tar.gz'
     from '.'
     baseName = 'as-gps-firehose'
     include 'config/**'
@@ -26,6 +32,13 @@ build.dependsOn(zip)
 
 repositories {
     mavenCentral()
+}
+
+docker{
+    url = "${dockerHost}"
+    if ( "$certUrl" != "" )
+        certPath = new File("$certUrl")
+
 }
 
 configurations {
@@ -45,6 +58,19 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn zip
+    quiet = false
+    inputDir = projectDir
+
+    tag = "$registerBaseName/$dockerBranch/$project.name:$dockerTag"
+}
+task pushImage(type: DockerPushImage) {
+    dependsOn buildImage
+    imageName = "$registerBaseName/$dockerBranch/$project.name"
+    tag="$dockerTag"
+}
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
