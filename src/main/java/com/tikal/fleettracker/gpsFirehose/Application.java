@@ -2,9 +2,6 @@ package com.tikal.fleettracker.gpsFirehose;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,9 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import com.goebl.david.Response;
-import com.goebl.david.Webb;
 
 @SpringBootApplication
 public class Application {
@@ -26,11 +20,8 @@ public class Application {
 	@Value("${schedualeIntervalInMillis}")
 	private int schedualeIntervalInMillis;
 	
-	@Value("${gpsInputFile:/var/log/fleettracker/gps.log}")
-	private String gpsInputFile;
-	
-	@Value("#{'${filterImei}'.split(',')}") 
-	private Set<String> filterImei;
+	@Value("${gpsInputFile:/var/log/fleettracker/gps-files}")
+	private String gpsInputFolder;
 	
 	@Autowired
 	private GpsSender gpsSender;
@@ -46,23 +37,10 @@ public class Application {
 	}
 	
 	public void run(final String... args) throws Exception {
-		final Stream<String> linesStream;
-		if(filterImei==null || filterImei.isEmpty())
-			linesStream = Files.lines(Paths.get(gpsInputFile));
-		else
-			linesStream = Files.lines(Paths.get(gpsInputFile)).filter(l->filterImei.contains(l.split(",")[1]));
-		linesStream.forEach(this::sendAndWait);
-		linesStream.close();
+		Files.list(Paths.get(gpsInputFolder)).filter(f->f.toString().endsWith("txt")).forEach(f->new Thread(new VehicleWorker(deviceManagerPostGpsUrl, schedualeIntervalInMillis, f, gpsSender)).start());
 	}
 	
-	void sendAndWait(final String g){
-		try {
-			gpsSender.send(g);
-			Thread.sleep(schedualeIntervalInMillis);
-		} catch (final Exception e) {
-			logger.error(e.getMessage());
-		}
-	}
+	
 }
 
 
