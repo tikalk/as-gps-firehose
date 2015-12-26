@@ -37,7 +37,7 @@ public class Application {
 	}
 	
 	public void run(final String... args) throws Exception {
-		Files.list(Paths.get(gpsInputFolder)).filter(f->f.toString().endsWith("txt")).forEach(f->new Thread(new VehicleWorker(deviceManagerPostGpsUrl, schedualeIntervalInMillis, f, gpsSender)).start());
+		Files.list(Paths.get(gpsInputFolder)).filter(f->f.toString().endsWith("txt")).forEach(f->new Thread(new VehicleWorker(schedualeIntervalInMillis, f, gpsSender)).start());
 	}
 	
 	
