@@ -34,7 +34,7 @@ public class VehicleWorker implements Runnable {
 			linesStream.forEach(this::sendAndWait);
 			linesStream.close();
 		} catch (final Exception e) {
-			logger.error("Failed Worker running", e);
+			logger.error("Failed Worker running from file "+gpsInputFile, e);
 		}
 
 	}
