@@ -9,8 +9,11 @@ From the project home folder run the following command:
 
 ./gradlew clean build -x test
 
-This will create self contained zip, that you can unzip on host container. The output zip is located at
-as-gps-firehose/build/distributions/as-gps-firehose-1.0.0.zip
+This will create self contained zip, that you can unzip on host container. The output zip can be downloaded from this site: http://research.microsoft.com/apps/pubs/?id=152883
+
+We are using the 01.zip, loacted at : http://research.microsoft.com/pubs/152883/01.zip
+
+
 
 ## How to run
 -----------
