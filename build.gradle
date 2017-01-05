@@ -18,16 +18,25 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+
 task zip(type: Tar, dependsOn: bootRepackage) {
     extension = 'tar.gz'
-    from '.'
-    baseName = 'as-gps-firehose'
-    include 'config/**'
-    include 'run-bin/*.sh'
-    include 'run-bin/*.bat'
-    include 'run-bin/*.sql'
-    include 'build/libs/*.jar'
-}
+    compression = Compression.GZIP
+    baseName 'as-gps-firehose'
+
+    from ('.'){
+        include 'config/**'
+        exclude 'run-bin/*.sh'
+        include 'run-bin/*.bat'
+        include 'run-bin/*.sql'
+        include 'build/libs/*.jar'
+     }
+     from ('.'){
+        include 'run-bin/*.sh'
+        fileMode 0755
+     }
+ }
+
 build.dependsOn(zip)
 
 repositories {
@@ -36,8 +45,8 @@ repositories {
 
 docker{
     url = "${dockerHost}"
-    if ( "$certUrl" != "" )
-        certPath = new File("$certUrl")
+//    if ( "$certUrl" != "" )
+//        certPath = new File("$certUrl")
 
 }
 
