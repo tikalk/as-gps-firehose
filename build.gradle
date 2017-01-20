@@ -22,7 +22,7 @@ import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 task zip(type: Tar, dependsOn: bootRepackage) {
     extension = 'tar.gz'
     compression = Compression.GZIP
-    baseName 'as-gps-firehose'
+    baseName 'ft-gps-firehose'
 
     from ('.'){
         include 'config/**'
@@ -73,11 +73,11 @@ task buildImage(type: DockerBuildImage) {
     quiet = false
     inputDir = projectDir
 
-    tag = "$registerBaseName/$dockerBranch/$project.name:$dockerTag"
+    tag = "$registerBaseName$dockerBranch/$project.name:$dockerTag"
 }
 task pushImage(type: DockerPushImage) {
     dependsOn buildImage
-    imageName = "$registerBaseName/$dockerBranch/$project.name"
+    imageName = "$registerBaseName$dockerBranch/$project.name"
     tag="$dockerTag"
 }
 task wrapper(type: Wrapper) {
